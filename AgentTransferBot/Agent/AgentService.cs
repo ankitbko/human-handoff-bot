@@ -36,7 +36,7 @@ namespace AgentTransferBot
                 return null;
 
             await SetAgentToUserState(Address.FromActivity(message), agent);
-            await SetUserToAgentState(agent, new User() { ConversationReference = message.ToConversationReference() });
+            await SetUserToAgentState(agent, new User(message));
 
             var userReply = message.CreateReply($"You are now connected to {agent.ConversationReference.User.Name}");
             await ReplyToActivityAsync(userReply);

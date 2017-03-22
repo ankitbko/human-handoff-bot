@@ -1,4 +1,5 @@
-﻿using Microsoft.Bot.Connector;
+﻿using Microsoft.Bot.Builder.ConnectorEx;
+using Microsoft.Bot.Connector;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,15 @@ namespace AgentTransferBot
 {
     public class User
     {
+        public User()
+        {
+
+        }
+        public User(Activity message)
+        {
+            ConversationReference = message.ToConversationReference();
+        }
+
         public ConversationReference ConversationReference { get; set; }
     }
 }
