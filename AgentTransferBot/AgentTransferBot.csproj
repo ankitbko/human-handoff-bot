@@ -128,6 +128,7 @@
     <Compile Include="Agent\IAgentProvider.cs" />
     <Compile Include="Agent\IAgentService.cs" />
     <Compile Include="Agent\IAgentToUser.cs" />
+    <Compile Include="Agent\InMemoryAgentStore.cs" />
     <Compile Include="Agent\IUserToAgent.cs" />
     <Compile Include="Agent\User.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
