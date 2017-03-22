@@ -11,11 +11,13 @@ using System.Threading.Tasks;
 
 namespace AgentTransferBot
 {
+    [Serializable]
     public class AgentService : IAgentService, IUserToAgent, IAgentToUser
     {
         private const string AGENT_KEY = "AgentRouteKey";
         private const string USER_KEY = "UserRouteKey";
         private readonly IAgentProvider _agentProvider;
+        [NonSerialized]
         private readonly IBotDataStore<BotData> _botDataStore;
 
         public AgentService(IAgentProvider agentProvider, IBotDataStore<BotData> botDataStore, IActivity message)
@@ -26,6 +28,7 @@ namespace AgentTransferBot
 
         public bool AgentTransferRequired(Activity message)
         {
+            // TODO && Check if it is valid conversation. eg. it is within last 5 min
             return IsInExistingConversationWithAgent(message);
         }
 
@@ -115,10 +118,8 @@ namespace AgentTransferBot
             await botData.FlushAsync(CancellationToken.None);
         }
 
-        private IBotData GetBotData(IAddress userAddress)
-        {
-            return new JObjectBotData(userAddress, _botDataStore);
-        }
+        private IBotData GetBotData(IAddress userAddress) =>
+            new JObjectBotData(userAddress, _botDataStore);
 
     }
 }

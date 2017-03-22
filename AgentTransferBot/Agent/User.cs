@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace AgentTransferBot
 {
+    [Serializable]
     public class User
     {
         public User()

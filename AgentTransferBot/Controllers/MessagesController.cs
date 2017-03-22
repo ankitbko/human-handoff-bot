@@ -8,12 +8,21 @@ using System.Web.Http.Description;
 using Microsoft.Bot.Connector;
 using Newtonsoft.Json;
 using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Builder.Dialogs.Internals;
+using Autofac;
+using System.Threading;
 
 namespace AgentTransferBot
 {
     [BotAuthentication]
     public class MessagesController : ApiController
     {
+        private readonly IAgentProvider _agentProvider;
+        public MessagesController(IAgentProvider agentProvider)
+        {
+            _agentProvider = agentProvider;
+        }
+
         /// <summary>
         /// POST: api/Messages
         /// Receive a message from a user and reply to it
@@ -22,7 +31,7 @@ namespace AgentTransferBot
         {
             if (activity.Type == ActivityTypes.Message)
             {
-                await Conversation.SendAsync(activity, () => new EchoDialog());
+                await SendAsync(activity, (scope) => new EchoDialog(scope.Resolve<IUserToAgent>()));
             }
             else
             {
@@ -57,12 +66,25 @@ namespace AgentTransferBot
             else if (message.Type == ActivityTypes.Ping)
             {
             }
-            else if (message.Type== ActivityTypes.Event)
+            else if (message.Type == ActivityTypes.Event)
             {
-
+                if (message.AsEventActivity().Name.Equals("connect"))
+                {
+                    _agentProvider.RegisterAgent(new Agent(message));
+                }
             }
 
             return null;
+        }
+
+        private async Task SendAsync(IMessageActivity toBot, Func<ILifetimeScope, IDialog<object>> MakeRoot, CancellationToken token = default(CancellationToken))
+        {
+            using (var scope = DialogModule.BeginLifetimeScope(Conversation.Container, toBot))
+            {
+                DialogModule_MakeRoot.Register(scope, () => MakeRoot(scope));
+                var task = scope.Resolve<IPostToBot>();
+                await task.PostAsync(toBot, token);
+            }
         }
     }
 }
