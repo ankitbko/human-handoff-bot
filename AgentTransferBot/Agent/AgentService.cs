@@ -65,7 +65,7 @@ namespace AgentTransferBot
             var reply = reference.GetPostToUserMessage();
             reply.Text = message.Text;
 
-            await ReplyToActivityAsync(message);
+            await ReplyToActivityAsync(reply);
         }
 
         public async Task SendToUser(Activity message)
@@ -75,7 +75,7 @@ namespace AgentTransferBot
             var reply = reference.GetPostToUserMessage();
             reply.Text = message.Text;
 
-            await ReplyToActivityAsync(message);
+            await ReplyToActivityAsync(reply);
         }
 
         public async Task<User> GetUserFromAgentState(IAddress agentAddress)
@@ -106,7 +106,7 @@ namespace AgentTransferBot
         private async Task ReplyToActivityAsync(Activity activity)
         {
             ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
-            await connector.Conversations.ReplyToActivityAsync(activity);
+            await connector.Conversations.SendToConversationAsync(activity);
         }
 
         private async Task SetUserToAgentState(Agent agent, User user)

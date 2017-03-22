@@ -10,7 +10,7 @@ using Microsoft.Bot.Builder.Scorables.Internals;
 
 namespace AgentTransferBot
 {
-    public class TransferToAgentScorable : ScorableBase<IMessageActivity, bool, double>
+    public class TransferToAgentScorable : ScorableBase<IActivity, bool, double>
     {
         private readonly IUserToAgent _agentService;
 
@@ -18,27 +18,27 @@ namespace AgentTransferBot
         {
             _agentService = agentService;
         }
-        protected override Task DoneAsync(IMessageActivity item, bool state, CancellationToken token)
+        protected override Task DoneAsync(IActivity item, bool state, CancellationToken token)
         {
             return Task.CompletedTask;
         }
 
-        protected override double GetScore(IMessageActivity item, bool state)
+        protected override double GetScore(IActivity item, bool state)
         {
             return state ? 1.0 : 0;
         }
 
-        protected override bool HasScore(IMessageActivity item, bool state)
+        protected override bool HasScore(IActivity item, bool state)
         {
             return state;
         }
 
-        protected override async Task PostAsync(IMessageActivity item, bool state, CancellationToken token)
+        protected override async Task PostAsync(IActivity item, bool state, CancellationToken token)
         {
             await _agentService.SendToAgent(item as Activity);
         }
 
-        protected override async Task<bool> PrepareAsync(IMessageActivity item, CancellationToken token)
+        protected override async Task<bool> PrepareAsync(IActivity item, CancellationToken token)
         {
             return await _agentService.AgentTransferRequired(item as Activity);
         }

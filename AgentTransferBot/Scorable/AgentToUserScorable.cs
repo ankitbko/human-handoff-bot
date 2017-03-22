@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace AgentTransferBot.Scorable
 {
-    public class AgentToUserScorable : ScorableBase<IMessageActivity, bool, double>
+    public class AgentToUserScorable : ScorableBase<IActivity, bool, double>
     {
         private readonly IAgentToUser _agentToUser;
 
@@ -17,18 +17,18 @@ namespace AgentTransferBot.Scorable
         {
             _agentToUser = agentToUser;
         }
-        protected override Task DoneAsync(IMessageActivity item, bool state, CancellationToken token) => Task.CompletedTask;
+        protected override Task DoneAsync(IActivity item, bool state, CancellationToken token) => Task.CompletedTask;
 
-        protected override double GetScore(IMessageActivity item, bool state) => state? 1.0 : 0.0;
+        protected override double GetScore(IActivity item, bool state) => state? 1.0 : 0.0;
 
-        protected override bool HasScore(IMessageActivity item, bool state) => state;
+        protected override bool HasScore(IActivity item, bool state) => state;
 
-        protected override async Task PostAsync(IMessageActivity item, bool state, CancellationToken token)
+        protected override async Task PostAsync(IActivity item, bool state, CancellationToken token)
         {
             await _agentToUser.SendToUser(item as Activity);
         }
 
-        protected override async Task<bool> PrepareAsync(IMessageActivity item, CancellationToken token)
+        protected override async Task<bool> PrepareAsync(IActivity item, CancellationToken token)
         {
             return IsAgent(item as Activity);
         }
