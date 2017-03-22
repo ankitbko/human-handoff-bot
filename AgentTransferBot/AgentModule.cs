@@ -23,9 +23,10 @@ namespace AgentTransferBot
                 .SingleInstance();
 
             builder.RegisterType<AgentService>()
-                .As<IAgentService>()
-                .As<IUserToAgent>()
-                .As<IAgentToUser>()
+                .Keyed<IAgentService>(FiberModule.Key_DoNotSerialize)
+                .Keyed<IUserToAgent>(FiberModule.Key_DoNotSerialize)
+                .Keyed<IAgentToUser>(FiberModule.Key_DoNotSerialize)
+                .AsImplementedInterfaces()
                 .InstancePerLifetimeScope();
 
             builder.RegisterType<AgentToUserScorable>()

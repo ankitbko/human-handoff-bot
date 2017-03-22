@@ -7,8 +7,8 @@ namespace AgentTransferBot
 {
     public interface IAgentService
     {
-        Agent GetAgentFromUserState(IAddress userAddress);
-        User GetUserFromAgentState(IAddress agentAddress);
-        void StopAgentUserConversation(IAddress userAddress, IAddress agentAddress);
+        Task<Agent> GetAgentFromUserState(IAddress userAddress);
+        Task<User> GetUserFromAgentState(IAddress agentAddress);
+        Task StopAgentUserConversation(IAddress userAddress, IAddress agentAddress);
     }
 }

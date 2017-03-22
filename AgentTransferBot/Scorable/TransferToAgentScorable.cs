@@ -40,7 +40,7 @@ namespace AgentTransferBot
 
         protected override async Task<bool> PrepareAsync(IMessageActivity item, CancellationToken token)
         {
-            return _agentService.AgentTransferRequired(item as Activity);
+            return await _agentService.AgentTransferRequired(item as Activity);
         }
     }
 }

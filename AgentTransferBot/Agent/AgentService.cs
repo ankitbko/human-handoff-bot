@@ -11,13 +11,11 @@ using System.Threading.Tasks;
 
 namespace AgentTransferBot
 {
-    [Serializable]
     public class AgentService : IAgentService, IUserToAgent, IAgentToUser
     {
         private const string AGENT_KEY = "AgentRouteKey";
         private const string USER_KEY = "UserRouteKey";
         private readonly IAgentProvider _agentProvider;
-        [NonSerialized]
         private readonly IBotDataStore<BotData> _botDataStore;
 
         public AgentService(IAgentProvider agentProvider, IBotDataStore<BotData> botDataStore, IActivity message)
@@ -26,10 +24,10 @@ namespace AgentTransferBot
             _botDataStore = botDataStore;
         }
 
-        public bool AgentTransferRequired(Activity message)
+        public async Task<bool> AgentTransferRequired(Activity message)
         {
             // TODO && Check if it is valid conversation. eg. it is within last 5 min
-            return IsInExistingConversationWithAgent(message);
+            return await IsInExistingConversationWithAgent(message);
         }
 
         public async Task<Agent> IntitiateConversationWithAgent(Activity message)
@@ -51,10 +49,10 @@ namespace AgentTransferBot
             return agent;
         }
 
-        public void StopAgentUserConversation(IAddress userAddress, IAddress agentAddress)
+        public async Task StopAgentUserConversation(IAddress userAddress, IAddress agentAddress)
         {
-            var userData = GetBotData(userAddress);
-            var agentData = GetBotData(agentAddress);
+            var userData = await GetBotData(userAddress);
+            var agentData = await GetBotData(agentAddress);
 
             userData.PrivateConversationData.RemoveValue(AGENT_KEY);
             agentData.PrivateConversationData.RemoveValue(USER_KEY);
@@ -62,7 +60,7 @@ namespace AgentTransferBot
 
         public async Task SendToAgent(Activity message)
         {
-            var agent = GetAgentFromUserState(Address.FromActivity(message));
+            var agent = await GetAgentFromUserState(Address.FromActivity(message));
             var reference = agent.ConversationReference;
             var reply = reference.GetPostToUserMessage();
             reply.Text = message.Text;
@@ -72,7 +70,7 @@ namespace AgentTransferBot
 
         public async Task SendToUser(Activity message)
         {
-            var user = GetUserFromAgentState(Address.FromActivity(message));
+            var user = await GetUserFromAgentState(Address.FromActivity(message));
             var reference = user.ConversationReference;
             var reply = reference.GetPostToUserMessage();
             reply.Text = message.Text;
@@ -80,27 +78,27 @@ namespace AgentTransferBot
             await ReplyToActivityAsync(message);
         }
 
-        public User GetUserFromAgentState(IAddress agentAddress)
+        public async Task<User> GetUserFromAgentState(IAddress agentAddress)
         {
-            var botData = GetBotData(agentAddress);
+            var botData = await GetBotData(agentAddress);
             return botData.PrivateConversationData.Get<User>(USER_KEY);
         }
 
-        public Agent GetAgentFromUserState(IAddress userAddress)
+        public async Task<Agent> GetAgentFromUserState(IAddress userAddress)
         {
-            var botData = GetBotData(userAddress);
+            var botData = await GetBotData(userAddress);
             return botData.PrivateConversationData.Get<Agent>(AGENT_KEY);
         }
 
-        private bool IsInExistingConversationWithAgent(Activity message)
+        private async Task<bool> IsInExistingConversationWithAgent(Activity message)
         {
-            var botData = GetBotData(Address.FromActivity(message));
+            var botData = await GetBotData(Address.FromActivity(message));
             return botData.PrivateConversationData.ContainsKey(AGENT_KEY);
         }
 
         private async Task SetAgentToUserState(IAddress userAddress, Agent agent)
         {
-            var botData = GetBotData(userAddress);
+            var botData = await GetBotData(userAddress);
             botData.PrivateConversationData.SetValue(AGENT_KEY, agent);
             await botData.FlushAsync(CancellationToken.None);
         }
@@ -113,13 +111,17 @@ namespace AgentTransferBot
 
         private async Task SetUserToAgentState(Agent agent, User user)
         {
-            var botData = GetBotData(Address.FromActivity(agent.ConversationReference.GetPostToBotMessage()));
+            var botData = await GetBotData(Address.FromActivity(agent.ConversationReference.GetPostToBotMessage()));
             botData.PrivateConversationData.SetValue(USER_KEY, user);
             await botData.FlushAsync(CancellationToken.None);
         }
 
-        private IBotData GetBotData(IAddress userAddress) =>
-            new JObjectBotData(userAddress, _botDataStore);
+        private async Task<IBotData> GetBotData(IAddress userAddress)
+        {
+            var botData = new JObjectBotData(userAddress, _botDataStore);
+            await botData.LoadAsync(default(CancellationToken));
+            return botData;
+        }
 
     }
 }

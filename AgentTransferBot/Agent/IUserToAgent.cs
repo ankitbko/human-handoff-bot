@@ -9,7 +9,7 @@ namespace AgentTransferBot
 {
     public interface IUserToAgent
     {
-        bool AgentTransferRequired(Activity message);
+        Task<bool> AgentTransferRequired(Activity message);
 
         Task SendToAgent(Activity message);
 
