@@ -138,6 +138,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Agent\AgentChannelData.cs" />
+    <Compile Include="Scorable\AgentToUserScorable.cs" />
     <Compile Include="Scorable\TransferToAgentScorable.cs" />
   </ItemGroup>
   <ItemGroup>
