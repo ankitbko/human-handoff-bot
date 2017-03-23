@@ -33,6 +33,14 @@ namespace AgentTransferBot
             return result;
         }
 
+        public async Task<bool> UnregisterAgent(IActivity activity)
+        {
+            var agent = _agentProvider.RemoveAgent(new Agent(activity));
+            if (agent == null)
+                return false;
+            return true;
+        }
+
         public async Task<AgentMetaData> GetAgentMetadata(IAddress agentAddress)
         {
             var botData = await GetBotData(agentAddress);

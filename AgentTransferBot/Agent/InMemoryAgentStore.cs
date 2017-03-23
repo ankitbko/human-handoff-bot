@@ -9,28 +9,50 @@ namespace AgentTransferBot
 {
     public class InMemoryAgentStore : IAgentProvider
     {
-        private ConcurrentQueue<Agent> _availableAgents = new ConcurrentQueue<Agent>();
+        private ConcurrentDictionary<string, Agent> _availableAgents = new ConcurrentDictionary<string, Agent>();
+        private static object objectLock = new object();
 
         public Agent GetNextAvailableAgent()
         {
-            Agent agent;
-            var success = _availableAgents.TryDequeue(out agent);
-            if (success)
-                return agent;
-            return null;
+            Agent agent = null;
+
+            lock (objectLock)
+            {
+                if (_availableAgents.Count > 0)
+                {
+                    var key = _availableAgents.Keys.First();
+                    agent = RemoveAgent(key);
+                }
+            }
+            return agent;
         }
 
         public bool AddAgent(Agent agent)
         {
             try
             {
-                _availableAgents.Enqueue(agent);
+                _availableAgents.AddOrUpdate(agent.AgentId, agent, (k, v) => agent);
                 return true;
             }
             catch (Exception)
             {
                 return false;
             }
+        }
+
+        public Agent RemoveAgent(Agent agent)
+        {
+            lock (objectLock)
+            {
+                return RemoveAgent(agent.AgentId);
+            }
+        }
+
+        private Agent RemoveAgent(string id)
+        {
+            Agent res;
+            _availableAgents.TryRemove(id, out res);
+            return res;
         }
     }
 }

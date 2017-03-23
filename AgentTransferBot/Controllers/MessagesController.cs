@@ -70,6 +70,9 @@ namespace AgentTransferBot
                         case "connect":
                             await agentService.RegisterAgent(message);
                             break;
+                        case "disconnect":
+                            await agentService.UnregisterAgent(message);
+                            break;
                         case "stopConversation":
                             await StopConversation(agentService, message);
                             await agentService.RegisterAgent(message);
