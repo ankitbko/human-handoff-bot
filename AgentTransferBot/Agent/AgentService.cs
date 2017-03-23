@@ -37,10 +37,8 @@ namespace AgentTransferBot
         {
             var botData = await GetBotData(agentAddress);
             AgentMetaData agentMetaData;
-            var success = botData.UserData.TryGetValue(AGENT_METADATA_KEY, out agentMetaData);
-            if (success)
-                return agentMetaData;
-            return null;
+            botData.UserData.TryGetValue(AGENT_METADATA_KEY, out agentMetaData);
+            return agentMetaData;
         }
 
         public async Task<bool> AgentTransferRequired(Activity message)
@@ -100,13 +98,17 @@ namespace AgentTransferBot
         public async Task<User> GetUserFromAgentState(IAddress agentAddress)
         {
             var botData = await GetBotData(agentAddress);
-            return botData.PrivateConversationData.Get<User>(USER_KEY);
+            User user;
+            botData.PrivateConversationData.TryGetValue(USER_KEY, out user);
+            return user;
         }
 
         public async Task<Agent> GetAgentFromUserState(IAddress userAddress)
         {
             var botData = await GetBotData(userAddress);
-            return botData.PrivateConversationData.Get<Agent>(AGENT_KEY);
+            Agent agent;
+            botData.PrivateConversationData.TryGetValue(AGENT_KEY, out agent);
+            return agent;
         }
 
         private async Task<bool> IsInExistingConversationWithAgent(Activity message)
