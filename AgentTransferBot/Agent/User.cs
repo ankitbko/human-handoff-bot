@@ -15,7 +15,7 @@ namespace AgentTransferBot
         {
 
         }
-        public User(Activity message)
+        public User(IActivity message)
         {
             ConversationReference = message.ToConversationReference();
         }

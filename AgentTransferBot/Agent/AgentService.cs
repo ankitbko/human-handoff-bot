@@ -15,6 +15,7 @@ namespace AgentTransferBot
     {
         private const string AGENT_KEY = "AgentRouteKey";
         private const string USER_KEY = "UserRouteKey";
+        private const string AGENT_METADATA_KEY = "AgentMetaData";
         private readonly IAgentProvider _agentProvider;
         private readonly IBotDataStore<BotData> _botDataStore;
 
@@ -22,6 +23,24 @@ namespace AgentTransferBot
         {
             _agentProvider = agentProvider;
             _botDataStore = botDataStore;
+        }
+
+        public async Task<bool> RegisterAgent(IActivity activity)
+        {
+            var result = _agentProvider.RegisterAgent(new Agent(activity));
+            if(result)
+                await SetAgentMetadataInState(Address.FromActivity(activity));
+            return result;
+        }
+
+        public async Task<AgentMetaData> GetAgentMetadata(IAddress agentAddress)
+        {
+            var botData = await GetBotData(agentAddress);
+            AgentMetaData agentMetaData;
+            var success = botData.UserData.TryGetValue(AGENT_METADATA_KEY, out agentMetaData);
+            if (success)
+                return agentMetaData;
+            return null;
         }
 
         public async Task<bool> AgentTransferRequired(Activity message)
@@ -123,5 +142,11 @@ namespace AgentTransferBot
             return botData;
         }
 
+        private async Task SetAgentMetadataInState(IAddress agentAddress)
+        {
+            var botData = await GetBotData(agentAddress);
+            botData.UserData.SetValue(AGENT_METADATA_KEY, new AgentMetaData() { IsAgent = true });
+            await botData.FlushAsync(CancellationToken.None);
+        }
     }
 }

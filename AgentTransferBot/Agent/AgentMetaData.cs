@@ -1,9 +1,9 @@
 ﻿using System;
 
-namespace AgentTransferBot.Scorable
+namespace AgentTransferBot
 {
     [Serializable]
-    public class AgentChannelData
+    public class AgentMetaData
     {
         public bool IsAgent { get; set; }
     }

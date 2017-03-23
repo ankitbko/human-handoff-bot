@@ -17,12 +17,6 @@ namespace AgentTransferBot
     [BotAuthentication]
     public class MessagesController : ApiController
     {
-        private readonly IAgentProvider _agentProvider;
-        public MessagesController(IAgentProvider agentProvider)
-        {
-            _agentProvider = agentProvider;
-        }
-
         /// <summary>
         /// POST: api/Messages
         /// Receive a message from a user and reply to it
@@ -35,13 +29,13 @@ namespace AgentTransferBot
             }
             else
             {
-                HandleSystemMessage(activity);
+                await HandleSystemMessage(activity);
             }
             var response = Request.CreateResponse(HttpStatusCode.OK);
             return response;
         }
 
-        private Activity HandleSystemMessage(Activity message)
+        private async Task<Activity> HandleSystemMessage(Activity message)
         {
             if (message.Type == ActivityTypes.DeleteUserData)
             {
@@ -70,7 +64,11 @@ namespace AgentTransferBot
             {
                 if (message.AsEventActivity().Name.Equals("connect"))
                 {
-                    _agentProvider.RegisterAgent(new Agent(message));
+                    using (var scope = DialogModule.BeginLifetimeScope(Conversation.Container, message))
+                    {
+                        var agentService = scope.Resolve<IAgentService>();
+                        await agentService.RegisterAgent(message);
+                    }
                 }
             }
 

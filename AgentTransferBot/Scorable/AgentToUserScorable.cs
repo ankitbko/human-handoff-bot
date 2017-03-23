@@ -6,16 +6,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
+using Microsoft.Bot.Builder.Dialogs;
 
 namespace AgentTransferBot.Scorable
 {
     public class AgentToUserScorable : ScorableBase<IActivity, bool, double>
     {
+        private readonly IAgentService _agentService;
         private readonly IAgentToUser _agentToUser;
 
-        public AgentToUserScorable(IAgentToUser agentToUser)
+        public AgentToUserScorable(IAgentToUser agentToUser, IAgentService agentService)
         {
             _agentToUser = agentToUser;
+            _agentService = agentService;
         }
         protected override Task DoneAsync(IActivity item, bool state, CancellationToken token) => Task.CompletedTask;
 
@@ -30,14 +33,14 @@ namespace AgentTransferBot.Scorable
 
         protected override async Task<bool> PrepareAsync(IActivity item, CancellationToken token)
         {
-            return IsAgent(item as Activity);
+            return await IsAgent(item);
         }
 
-        private bool IsAgent(Activity activity)
+        private async Task<bool> IsAgent(IActivity activity)
         {
-            var data = activity.GetChannelData<AgentChannelData>();
-            if (data != null)
-                return data.IsAgent;
+            var agentData = await _agentService.GetAgentMetadata(Address.FromActivity(activity));
+            if (agentData != null)
+                return agentData.IsAgent;
             return false;
         }
     }
