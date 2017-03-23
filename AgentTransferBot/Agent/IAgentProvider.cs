@@ -9,7 +9,7 @@ namespace AgentTransferBot
     public interface IAgentProvider
     {
         Agent GetNextAvailableAgent();
-        bool RegisterAgent(Agent agent);
+        bool AddAgent(Agent agent);
 
     }
 }

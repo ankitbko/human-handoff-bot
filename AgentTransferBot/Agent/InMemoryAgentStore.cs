@@ -10,6 +10,7 @@ namespace AgentTransferBot
     public class InMemoryAgentStore : IAgentProvider
     {
         private ConcurrentQueue<Agent> _availableAgents = new ConcurrentQueue<Agent>();
+
         public Agent GetNextAvailableAgent()
         {
             Agent agent;
@@ -19,7 +20,7 @@ namespace AgentTransferBot
             return null;
         }
 
-        public bool RegisterAgent(Agent agent)
+        public bool AddAgent(Agent agent)
         {
             try
             {

@@ -27,7 +27,7 @@ namespace AgentTransferBot
 
         public async Task<bool> RegisterAgent(IActivity activity)
         {
-            var result = _agentProvider.RegisterAgent(new Agent(activity));
+            var result = _agentProvider.AddAgent(new Agent(activity));
             if(result)
                 await SetAgentMetadataInState(Address.FromActivity(activity));
             return result;
