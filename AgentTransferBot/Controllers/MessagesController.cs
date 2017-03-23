@@ -62,17 +62,56 @@ namespace AgentTransferBot
             }
             else if (message.Type == ActivityTypes.Event)
             {
-                if (message.AsEventActivity().Name.Equals("connect"))
+                using (var scope = DialogModule.BeginLifetimeScope(Conversation.Container, message))
                 {
-                    using (var scope = DialogModule.BeginLifetimeScope(Conversation.Container, message))
+                    var agentService = scope.Resolve<IAgentService>();
+                    switch (message.AsEventActivity().Name)
                     {
-                        var agentService = scope.Resolve<IAgentService>();
-                        await agentService.RegisterAgent(message);
+                        case "connect":
+                            await agentService.RegisterAgent(message);
+                            break;
+                        case "stopConversation":
+                            await StopConversation(agentService, message);
+                            await agentService.RegisterAgent(message);
+                            break;
+                        default:
+                            break;
                     }
                 }
             }
 
             return null;
+        }
+
+        private async Task StopConversation(IAgentService agentService, Activity agentActivity)
+        {
+            var user = await agentService.GetUserFromAgentState(Address.FromActivity(agentActivity));
+            var agentReply = agentActivity.CreateReply();
+            if (user == null)
+            {
+                agentReply.Text = "Hey! You were not talking to anyone.";
+                await ReplyToActivityAsync(agentReply);
+                return;
+            }
+
+            var userReply = user.ConversationReference.GetPostToUserMessage();
+            await agentService.StopAgentUserConversation(
+                Address.FromActivity(userReply),
+                Address.FromActivity(agentActivity));
+
+            userReply.Text = "You have been disconnected from our representative.";
+            await ReplyToActivityAsync(userReply);
+            userReply.Text = "But we can still talk; :)";
+            await ReplyToActivityAsync(userReply);
+
+            agentReply.Text = "You have stopped the conversation.";
+            await ReplyToActivityAsync(agentReply);
+        }
+
+        private async Task ReplyToActivityAsync(Activity activity)
+        {
+            ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
+            await connector.Conversations.SendToConversationAsync(activity);
         }
 
         private async Task SendAsync(IMessageActivity toBot, Func<ILifetimeScope, IDialog<object>> MakeRoot, CancellationToken token = default(CancellationToken))
