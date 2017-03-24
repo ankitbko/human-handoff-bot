@@ -7,6 +7,7 @@ namespace AgentTransferBot
 {
     public interface IAgentService
     {
+        Task<bool> IsInExistingConversation(IActivity activity);
         Task<bool> RegisterAgent(IActivity activity);
         Task<bool> UnregisterAgent(IActivity activity);
         Task<AgentMetaData> GetAgentMetadata(IAddress agentAddress);

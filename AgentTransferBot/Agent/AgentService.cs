@@ -24,6 +24,14 @@ namespace AgentTransferBot
             _botDataStore = botDataStore;
         }
 
+        public async Task<bool> IsInExistingConversation(IActivity activity)
+        {
+            var user = await GetUserFromAgentState(Address.FromActivity(activity));
+            if (user == null)
+                return false;
+            return true;
+        }
+
         public async Task<bool> RegisterAgent(IActivity activity)
         {
             var result = _agentProvider.AddAgent(new Agent(activity));

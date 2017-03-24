@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Builder.Dialogs.Internals;
 
 namespace AgentTransferBot.Scorable
 {
@@ -14,11 +15,13 @@ namespace AgentTransferBot.Scorable
     {
         private readonly IAgentService _agentService;
         private readonly IAgentToUser _agentToUser;
+        private readonly IBotToUser _botToUser;
 
-        public AgentToUserScorable(IAgentToUser agentToUser, IAgentService agentService)
+        public AgentToUserScorable(IAgentToUser agentToUser, IAgentService agentService, IBotToUser botToUser)
         {
             _agentToUser = agentToUser;
             _agentService = agentService;
+            _botToUser = botToUser;
         }
         protected override Task DoneAsync(IActivity item, bool state, CancellationToken token) => Task.CompletedTask;
 
@@ -28,13 +31,17 @@ namespace AgentTransferBot.Scorable
 
         protected override async Task PostAsync(IActivity item, bool state, CancellationToken token)
         {
-            await _agentToUser.SendToUser(item as Activity);
+            if (await _agentService.IsInExistingConversation(item))
+                await _agentToUser.SendToUser(item as Activity);
+            else
+            {
+                await _botToUser.PostAsync("You are not talking with any user.");
+                await _botToUser.PostAsync("And sadly, you can't talk to me either. :(");
+            }
         }
 
-        protected override async Task<bool> PrepareAsync(IActivity item, CancellationToken token)
-        {
-            return await IsAgent(item);
-        }
+        protected override async Task<bool> PrepareAsync(IActivity item, CancellationToken token) =>
+            await IsAgent(item);
 
         private async Task<bool> IsAgent(IActivity activity)
         {
