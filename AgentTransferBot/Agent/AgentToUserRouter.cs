@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Bot.Connector;
 using Microsoft.Bot.Builder.Dialogs;
+using System.Threading;
 
 namespace AgentTransferBot
 {
@@ -16,9 +17,9 @@ namespace AgentTransferBot
         {
             _agentService = agentService;
         }
-        public async Task SendToUser(Activity message)
+        public async Task SendToUser(Activity message, CancellationToken cancellationToken)
         {
-            var user = await _agentService.GetUserFromAgentState(Address.FromActivity(message));
+            var user = await _agentService.GetUserFromAgentState(Address.FromActivity(message), cancellationToken);
             var reference = user.ConversationReference;
             var reply = reference.GetPostToUserMessage();
             reply.Text = message.Text;

@@ -11,6 +11,7 @@ using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Dialogs.Internals;
 using Autofac;
 using System.Threading;
+using static AgentTransferBot.Utilities;
 
 namespace AgentTransferBot
 {
@@ -64,18 +65,19 @@ namespace AgentTransferBot
             {
                 using (var scope = DialogModule.BeginLifetimeScope(Conversation.Container, message))
                 {
+                    var cancellationToken = default(CancellationToken);
                     var agentService = scope.Resolve<IAgentService>();
                     switch (message.AsEventActivity().Name)
                     {
                         case "connect":
-                            await agentService.RegisterAgent(message);
+                            await agentService.RegisterAgent(message, cancellationToken);
                             break;
                         case "disconnect":
-                            await agentService.UnregisterAgent(message);
+                            await agentService.UnregisterAgent(message, cancellationToken);
                             break;
                         case "stopConversation":
-                            await StopConversation(agentService, message);
-                            await agentService.RegisterAgent(message);
+                            await StopConversation(agentService, message, cancellationToken);
+                            await agentService.RegisterAgent(message, cancellationToken);
                             break;
                         default:
                             break;
@@ -86,35 +88,30 @@ namespace AgentTransferBot
             return null;
         }
 
-        private async Task StopConversation(IAgentService agentService, Activity agentActivity)
+        private async Task StopConversation(IAgentService agentService, Activity agentActivity, CancellationToken cancellationToken)
         {
-            var user = await agentService.GetUserFromAgentState(Address.FromActivity(agentActivity));
+            var user = await agentService.GetUserFromAgentState(Address.FromActivity(agentActivity), cancellationToken);
             var agentReply = agentActivity.CreateReply();
             if (user == null)
             {
                 agentReply.Text = "Hey! You were not talking to anyone.";
-                await ReplyToActivityAsync(agentReply);
+                await SendToConversationAsync(agentReply);
                 return;
             }
 
             var userReply = user.ConversationReference.GetPostToUserMessage();
             await agentService.StopAgentUserConversation(
                 Address.FromActivity(userReply),
-                Address.FromActivity(agentActivity));
+                Address.FromActivity(agentActivity),
+                cancellationToken);
 
             userReply.Text = "You have been disconnected from our representative.";
-            await ReplyToActivityAsync(userReply);
-            userReply.Text = "But we can still talk; :)";
-            await ReplyToActivityAsync(userReply);
+            await SendToConversationAsync(userReply);
+            userReply.Text = "But we can still talk :)";
+            await SendToConversationAsync(userReply);
 
             agentReply.Text = "You have stopped the conversation.";
-            await ReplyToActivityAsync(agentReply);
-        }
-
-        private async Task ReplyToActivityAsync(Activity activity)
-        {
-            ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
-            await connector.Conversations.SendToConversationAsync(activity);
+            await SendToConversationAsync(agentReply);
         }
 
         private async Task SendAsync(IMessageActivity toBot, Func<ILifetimeScope, IDialog<object>> MakeRoot, CancellationToken token = default(CancellationToken))

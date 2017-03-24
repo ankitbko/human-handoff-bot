@@ -24,20 +24,20 @@ namespace AgentTransferBot
             _agentService = agentService;
         }
 
-        public async Task<bool> AgentTransferRequired(Activity message)
+        public async Task<bool> AgentTransferRequired(Activity message, CancellationToken cancellationToken)
         {
             // TODO && Check if it is valid conversation. eg. it is within last 5 min
-            return await IsInExistingConversationWithAgent(message);
+            return await IsInExistingConversationWithAgent(message, cancellationToken);
         }
 
-        public async Task<Agent> IntitiateConversationWithAgent(Activity message)
+        public async Task<Agent> IntitiateConversationWithAgent(Activity message, CancellationToken cancellationToken)
         {
             var agent = _agentProvider.GetNextAvailableAgent();
             if (agent == null)
                 return null;
 
-            await SetAgentToUserState(Address.FromActivity(message), agent);
-            await SetUserToAgentState(agent, new User(message));
+            await SetAgentToUserState(Address.FromActivity(message), agent, cancellationToken);
+            await SetUserToAgentState(agent, new User(message), cancellationToken);
 
             var userReply = message.CreateReply($"You are now connected to {agent.ConversationReference.User.Name}");
             await SendToConversationAsync(userReply);
@@ -49,9 +49,9 @@ namespace AgentTransferBot
             return agent;
         }
 
-        public async Task SendToAgent(Activity message)
+        public async Task SendToAgent(Activity message, CancellationToken cancellationToken)
         {
-            var agent = await _agentService.GetAgentFromUserState(Address.FromActivity(message));
+            var agent = await _agentService.GetAgentFromUserState(Address.FromActivity(message), cancellationToken);
             var reference = agent.ConversationReference;
             var reply = reference.GetPostToUserMessage();
             reply.Text = message.Text;
@@ -60,20 +60,20 @@ namespace AgentTransferBot
         }
 
         #region Private Members
-        private async Task<bool> IsInExistingConversationWithAgent(Activity message)
+        private async Task<bool> IsInExistingConversationWithAgent(Activity message, CancellationToken cancellationToken)
         {
-            var botData = await GetBotData(Address.FromActivity(message), _botDataStore);
+            var botData = await GetBotData(Address.FromActivity(message), _botDataStore, cancellationToken);
             return botData.PrivateConversationData.ContainsKey(Constants.AGENT_KEY);
         }
-        private async Task SetAgentToUserState(IAddress userAddress, Agent agent)
+        private async Task SetAgentToUserState(IAddress userAddress, Agent agent, CancellationToken cancellationToken)
         {
-            var botData = await GetBotData(userAddress, _botDataStore);
+            var botData = await GetBotData(userAddress, _botDataStore, cancellationToken);
             botData.PrivateConversationData.SetValue(Constants.AGENT_KEY, agent);
             await botData.FlushAsync(CancellationToken.None);
         }
-        private async Task SetUserToAgentState(Agent agent, User user)
+        private async Task SetUserToAgentState(Agent agent, User user, CancellationToken cancellationToken)
         {
-            var botData = await GetBotData(Address.FromActivity(agent.ConversationReference.GetPostToBotMessage()), _botDataStore);
+            var botData = await GetBotData(Address.FromActivity(agent.ConversationReference.GetPostToBotMessage()), _botDataStore, cancellationToken);
             botData.PrivateConversationData.SetValue(Constants.USER_KEY, user);
             await botData.FlushAsync(CancellationToken.None);
         }

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AgentTransferBot
@@ -27,7 +28,7 @@ namespace AgentTransferBot
             var message = await result;
             if (message.Text.StartsWith("a"))
             {
-                var agent = await _userToAgent.IntitiateConversationWithAgent(message as Activity);
+                var agent = await _userToAgent.IntitiateConversationWithAgent(message as Activity, default(CancellationToken));
                 if (agent == null)
                     await context.PostAsync("All our customer care representatives are busy at the moment. Please try after some time.");
             }
