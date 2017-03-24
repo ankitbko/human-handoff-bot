@@ -99,12 +99,13 @@ namespace AgentTransferBot
                 return;
             }
 
-            var userReply = user.ConversationReference.GetPostToUserMessage();
+            var userActivity = user.ConversationReference.GetPostToBotMessage();
             await agentService.StopAgentUserConversationAsync(
-                userReply,
+                userActivity,
                 agentActivity,
                 cancellationToken);
 
+            var userReply = userActivity.CreateReply();
             userReply.Text = "You have been disconnected from our representative.";
             await SendToConversationAsync(userReply);
             userReply.Text = "But we can still talk :)";
