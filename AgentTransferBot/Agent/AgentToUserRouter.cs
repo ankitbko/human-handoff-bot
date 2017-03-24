@@ -19,7 +19,7 @@ namespace AgentTransferBot
         }
         public async Task SendToUserAsync(Activity message, CancellationToken cancellationToken)
         {
-            var user = await _agentService.GetUserFromAgentStateAsync(Address.FromActivity(message), cancellationToken);
+            var user = await _agentService.GetUserInConversationAsync(message, cancellationToken);
             var reference = user.ConversationReference;
             var reply = reference.GetPostToUserMessage();
             reply.Text = message.Text;

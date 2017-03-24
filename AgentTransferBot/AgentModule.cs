@@ -37,6 +37,11 @@ namespace AgentTransferBot
                 .AsImplementedInterfaces()
                 .InstancePerLifetimeScope();
 
+            builder.RegisterType<BotStateMappingStorage>()
+               .Keyed<IAgentUserMapping>(FiberModule.Key_DoNotSerialize)
+               .AsImplementedInterfaces()
+               .InstancePerLifetimeScope();
+
             builder.RegisterType<AgentToUserScorable>()
                 .As<IScorable<IActivity, double>>()
                 .InstancePerLifetimeScope();

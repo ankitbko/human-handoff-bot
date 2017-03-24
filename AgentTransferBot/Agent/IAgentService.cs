@@ -11,9 +11,9 @@ namespace AgentTransferBot
         Task<bool> IsInExistingConversationAsync(IActivity activity, CancellationToken cancellationToken);
         Task<bool> RegisterAgentAsync(IActivity activity, CancellationToken cancellationToken);
         Task<bool> UnregisterAgentAsync(IActivity activity, CancellationToken cancellationToken);
-        Task<AgentMetaData> GetAgentMetadataAsync(IAddress agentAddress, CancellationToken cancellationToken);
-        Task<Agent> GetAgentFromUserStateAsync(IAddress userAddress, CancellationToken cancellationToken);
-        Task<User> GetUserFromAgentStateAsync(IAddress agentAddress, CancellationToken cancellationToken);
-        Task StopAgentUserConversationAsync(IAddress userAddress, IAddress agentAddress, CancellationToken cancellationToken);
+        Task<bool> IsAgent(IActivity activity, CancellationToken cancellationToken);
+        Task<Agent> GetAgentInConversationAsync(IActivity userActivity, CancellationToken cancellationToken);
+        Task<User> GetUserInConversationAsync(IActivity agentActivity, CancellationToken cancellationToken);
+        Task StopAgentUserConversationAsync(IActivity userActivity, IActivity agentActivity, CancellationToken cancellationToken);
     }
 }

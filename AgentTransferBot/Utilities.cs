@@ -24,5 +24,11 @@ namespace AgentTransferBot
             await botData.LoadAsync(cancellationToken);
             return botData;
         }
+
+        public static IAddress GetAddress(this User user) =>
+            Address.FromActivity(user.ConversationReference.GetPostToBotMessage());
+
+        public static IAddress GetAddress(this Agent agent) =>
+            Address.FromActivity(agent.ConversationReference.GetPostToBotMessage());
     }
 }

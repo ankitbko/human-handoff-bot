@@ -41,14 +41,6 @@ namespace AgentTransferBot.Scorable
         }
 
         protected override async Task<bool> PrepareAsync(IActivity item, CancellationToken token) =>
-            await IsAgent(item, token);
-
-        private async Task<bool> IsAgent(IActivity activity, CancellationToken cancellationToken)
-        {
-            var agentData = await _agentService.GetAgentMetadataAsync(Address.FromActivity(activity), cancellationToken);
-            if (agentData != null)
-                return agentData.IsAgent;
-            return false;
-        }
+            await _agentService.IsAgent(item, token);
     }
 }
