@@ -162,13 +162,16 @@
     <Compile Include="AgentModule.cs" />
     <Compile Include="Agent\Agent.cs" />
     <Compile Include="Agent\AgentService.cs" />
+    <Compile Include="Agent\AgentToUserRouter.cs" />
     <Compile Include="Agent\IAgentProvider.cs" />
     <Compile Include="Agent\IAgentService.cs" />
     <Compile Include="Agent\IAgentToUser.cs" />
     <Compile Include="Agent\InMemoryAgentStore.cs" />
     <Compile Include="Agent\IUserToAgent.cs" />
     <Compile Include="Agent\User.cs" />
+    <Compile Include="Agent\UserToAgentRouter.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="Controllers\EchoDialog.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Global.asax.cs">
@@ -178,6 +181,7 @@
     <Compile Include="Agent\AgentMetaData.cs" />
     <Compile Include="Scorable\AgentToUserScorable.cs" />
     <Compile Include="Scorable\TransferToAgentScorable.cs" />
+    <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
