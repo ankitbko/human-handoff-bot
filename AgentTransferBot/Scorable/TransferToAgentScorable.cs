@@ -35,12 +35,12 @@ namespace AgentTransferBot
 
         protected override async Task PostAsync(IActivity item, bool state, CancellationToken token)
         {
-            await _agentService.SendToAgent(item as Activity, token);
+            await _agentService.SendToAgentAsync(item as Activity, token);
         }
 
         protected override async Task<bool> PrepareAsync(IActivity item, CancellationToken token)
         {
-            return await _agentService.AgentTransferRequired(item as Activity, token);
+            return await _agentService.AgentTransferRequiredAsync(item as Activity, token);
         }
     }
 }

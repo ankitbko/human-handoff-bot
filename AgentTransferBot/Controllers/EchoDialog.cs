@@ -28,7 +28,7 @@ namespace AgentTransferBot
             var message = await result;
             if (message.Text.StartsWith("a"))
             {
-                var agent = await _userToAgent.IntitiateConversationWithAgent(message as Activity, default(CancellationToken));
+                var agent = await _userToAgent.IntitiateConversationWithAgentAsync(message as Activity, default(CancellationToken));
                 if (agent == null)
                     await context.PostAsync("All our customer care representatives are busy at the moment. Please try after some time.");
             }

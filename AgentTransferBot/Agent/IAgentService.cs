@@ -8,12 +8,12 @@ namespace AgentTransferBot
 {
     public interface IAgentService
     {
-        Task<bool> IsInExistingConversation(IActivity activity, CancellationToken cancellationToken);
-        Task<bool> RegisterAgent(IActivity activity, CancellationToken cancellationToken);
-        Task<bool> UnregisterAgent(IActivity activity, CancellationToken cancellationToken);
-        Task<AgentMetaData> GetAgentMetadata(IAddress agentAddress, CancellationToken cancellationToken);
-        Task<Agent> GetAgentFromUserState(IAddress userAddress, CancellationToken cancellationToken);
-        Task<User> GetUserFromAgentState(IAddress agentAddress, CancellationToken cancellationToken);
-        Task StopAgentUserConversation(IAddress userAddress, IAddress agentAddress, CancellationToken cancellationToken);
+        Task<bool> IsInExistingConversationAsync(IActivity activity, CancellationToken cancellationToken);
+        Task<bool> RegisterAgentAsync(IActivity activity, CancellationToken cancellationToken);
+        Task<bool> UnregisterAgentAsync(IActivity activity, CancellationToken cancellationToken);
+        Task<AgentMetaData> GetAgentMetadataAsync(IAddress agentAddress, CancellationToken cancellationToken);
+        Task<Agent> GetAgentFromUserStateAsync(IAddress userAddress, CancellationToken cancellationToken);
+        Task<User> GetUserFromAgentStateAsync(IAddress agentAddress, CancellationToken cancellationToken);
+        Task StopAgentUserConversationAsync(IAddress userAddress, IAddress agentAddress, CancellationToken cancellationToken);
     }
 }

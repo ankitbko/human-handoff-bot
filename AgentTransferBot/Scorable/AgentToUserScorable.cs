@@ -31,8 +31,8 @@ namespace AgentTransferBot.Scorable
 
         protected override async Task PostAsync(IActivity item, bool state, CancellationToken token)
         {
-            if (await _agentService.IsInExistingConversation(item, token))
-                await _agentToUser.SendToUser(item as Activity, token);
+            if (await _agentService.IsInExistingConversationAsync(item, token))
+                await _agentToUser.SendToUserAsync(item as Activity, token);
             else
             {
                 await _botToUser.PostAsync("You are not talking with any user.");
@@ -45,7 +45,7 @@ namespace AgentTransferBot.Scorable
 
         private async Task<bool> IsAgent(IActivity activity, CancellationToken cancellationToken)
         {
-            var agentData = await _agentService.GetAgentMetadata(Address.FromActivity(activity), cancellationToken);
+            var agentData = await _agentService.GetAgentMetadataAsync(Address.FromActivity(activity), cancellationToken);
             if (agentData != null)
                 return agentData.IsAgent;
             return false;

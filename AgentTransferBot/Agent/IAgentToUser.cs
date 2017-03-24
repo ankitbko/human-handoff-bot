@@ -10,6 +10,6 @@ namespace AgentTransferBot
 {
     public interface IAgentToUser
     {
-        Task SendToUser(Activity message, CancellationToken cancellationToken);
+        Task SendToUserAsync(Activity message, CancellationToken cancellationToken);
     }
 }

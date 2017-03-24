@@ -18,7 +18,7 @@ namespace AgentTransferBot
             await connector.Conversations.SendToConversationAsync(activity);
         }
 
-        public static async Task<IBotData> GetBotData(IAddress userAddress, IBotDataStore<BotData> botDataStore, CancellationToken cancellationToken)
+        public static async Task<IBotData> GetBotDataAsync(IAddress userAddress, IBotDataStore<BotData> botDataStore, CancellationToken cancellationToken)
         {
             var botData = new JObjectBotData(userAddress, botDataStore);
             await botData.LoadAsync(cancellationToken);

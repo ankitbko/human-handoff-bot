@@ -70,14 +70,14 @@ namespace AgentTransferBot
                     switch (message.AsEventActivity().Name)
                     {
                         case "connect":
-                            await agentService.RegisterAgent(message, cancellationToken);
+                            await agentService.RegisterAgentAsync(message, cancellationToken);
                             break;
                         case "disconnect":
-                            await agentService.UnregisterAgent(message, cancellationToken);
+                            await agentService.UnregisterAgentAsync(message, cancellationToken);
                             break;
                         case "stopConversation":
                             await StopConversation(agentService, message, cancellationToken);
-                            await agentService.RegisterAgent(message, cancellationToken);
+                            await agentService.RegisterAgentAsync(message, cancellationToken);
                             break;
                         default:
                             break;
@@ -90,7 +90,7 @@ namespace AgentTransferBot
 
         private async Task StopConversation(IAgentService agentService, Activity agentActivity, CancellationToken cancellationToken)
         {
-            var user = await agentService.GetUserFromAgentState(Address.FromActivity(agentActivity), cancellationToken);
+            var user = await agentService.GetUserFromAgentStateAsync(Address.FromActivity(agentActivity), cancellationToken);
             var agentReply = agentActivity.CreateReply();
             if (user == null)
             {
@@ -100,7 +100,7 @@ namespace AgentTransferBot
             }
 
             var userReply = user.ConversationReference.GetPostToUserMessage();
-            await agentService.StopAgentUserConversation(
+            await agentService.StopAgentUserConversationAsync(
                 Address.FromActivity(userReply),
                 Address.FromActivity(agentActivity),
                 cancellationToken);

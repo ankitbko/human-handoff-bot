@@ -10,10 +10,10 @@ namespace AgentTransferBot
 {
     public interface IUserToAgent
     {
-        Task<bool> AgentTransferRequired(Activity message, CancellationToken cancellationToken);
+        Task<bool> AgentTransferRequiredAsync(Activity message, CancellationToken cancellationToken);
 
-        Task SendToAgent(Activity message, CancellationToken cancellationToken);
+        Task SendToAgentAsync(Activity message, CancellationToken cancellationToken);
 
-        Task<Agent> IntitiateConversationWithAgent(Activity message, CancellationToken cancellationToken);
+        Task<Agent> IntitiateConversationWithAgentAsync(Activity message, CancellationToken cancellationToken);
     }
 }
