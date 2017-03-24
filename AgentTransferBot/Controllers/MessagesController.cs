@@ -90,7 +90,7 @@ namespace AgentTransferBot
 
         private async Task StopConversation(IAgentService agentService, Activity agentActivity, CancellationToken cancellationToken)
         {
-            var user = await agentService.GetUserFromAgentStateAsync(Address.FromActivity(agentActivity), cancellationToken);
+            var user = await agentService.GetUserInConversationAsync(agentActivity, cancellationToken);
             var agentReply = agentActivity.CreateReply();
             if (user == null)
             {
@@ -101,8 +101,8 @@ namespace AgentTransferBot
 
             var userReply = user.ConversationReference.GetPostToUserMessage();
             await agentService.StopAgentUserConversationAsync(
-                Address.FromActivity(userReply),
-                Address.FromActivity(agentActivity),
+                userReply,
+                agentActivity,
                 cancellationToken);
 
             userReply.Text = "You have been disconnected from our representative.";
