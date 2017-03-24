@@ -1,0 +1,89 @@
+{
+  "luis_schema_version": "2.0.0",
+  "versionId": "0.1",
+  "name": "AgentTransfer",
+  "desc": "",
+  "culture": "en-us",
+  "intents": [
+    {
+      "name": "AgentTransfer"
+    },
+    {
+      "name": "None"
+    }
+  ],
+  "entities": [],
+  "composites": [],
+  "closedLists": [],
+  "bing_entities": [],
+  "actions": [],
+  "model_features": [],
+  "regex_features": [],
+  "utterances": [
+    {
+      "text": "i want a pizza",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "whatever",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "lets play football",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "oooo pizzaaaa",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "anything and everything",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "i want to talk to a human",
+      "intent": "AgentTransfer",
+      "entities": []
+    },
+    {
+      "text": "transfer to agent",
+      "intent": "AgentTransfer",
+      "entities": []
+    },
+    {
+      "text": "contact human agent",
+      "intent": "AgentTransfer",
+      "entities": []
+    },
+    {
+      "text": "transfer to human agent",
+      "intent": "AgentTransfer",
+      "entities": []
+    },
+    {
+      "text": "i want to talk to customer care representative",
+      "intent": "AgentTransfer",
+      "entities": []
+    },
+    {
+      "text": "transfer to customer care",
+      "intent": "AgentTransfer",
+      "entities": []
+    },
+    {
+      "text": "contact a human",
+      "intent": "AgentTransfer",
+      "entities": []
+    },
+    {
+      "text": "contact customer care",
+      "intent": "AgentTransfer",
+      "entities": []
+    }
+  ]
+}

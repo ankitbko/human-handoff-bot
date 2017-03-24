@@ -26,7 +26,7 @@ namespace AgentTransferBot
         {
             if (activity.Type == ActivityTypes.Message)
             {
-                await SendAsync(activity, (scope) => new EchoDialog(scope.Resolve<IUserToAgent>()));
+                await SendAsync(activity, (scope) => new TransferLuisDialog(scope.Resolve<IUserToAgent>()));
             }
             else
             {
