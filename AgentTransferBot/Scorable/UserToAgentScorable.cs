@@ -10,11 +10,11 @@ using Microsoft.Bot.Builder.Scorables.Internals;
 
 namespace AgentTransferBot
 {
-    public class TransferToAgentScorable : ScorableBase<IActivity, bool, double>
+    public class UserToAgentScorable : ScorableBase<IActivity, bool, double>
     {
         private readonly IUserToAgent _agentService;
 
-        public TransferToAgentScorable(IUserToAgent agentService)
+        public UserToAgentScorable(IUserToAgent agentService)
         {
             _agentService = agentService;
         }

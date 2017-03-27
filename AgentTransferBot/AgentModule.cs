@@ -46,7 +46,7 @@ namespace AgentTransferBot
                 .As<IScorable<IActivity, double>>()
                 .InstancePerLifetimeScope();
 
-            builder.RegisterType<TransferToAgentScorable>()
+            builder.RegisterType<UserToAgentScorable>()
                 .As<IScorable<IActivity, double>>()
                 .InstancePerLifetimeScope();
         }
