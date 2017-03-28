@@ -12,11 +12,11 @@ namespace AgentTransferBot
 {
     public class UserToAgentScorable : ScorableBase<IActivity, bool, double>
     {
-        private readonly IUserToAgent _agentService;
+        private readonly IUserToAgent _userToAgent;
 
-        public UserToAgentScorable(IUserToAgent agentService)
+        public UserToAgentScorable(IUserToAgent userToAgent)
         {
-            _agentService = agentService;
+            _userToAgent = userToAgent;
         }
         protected override Task DoneAsync(IActivity item, bool state, CancellationToken token)
         {
@@ -35,12 +35,12 @@ namespace AgentTransferBot
 
         protected override async Task PostAsync(IActivity item, bool state, CancellationToken token)
         {
-            await _agentService.SendToAgentAsync(item as Activity, token);
+            await _userToAgent.SendToAgentAsync(item as Activity, token);
         }
 
         protected override async Task<bool> PrepareAsync(IActivity item, CancellationToken token)
         {
-            return await _agentService.AgentTransferRequiredAsync(item as Activity, token);
+            return await _userToAgent.AgentTransferRequiredAsync(item as Activity, token);
         }
     }
 }
